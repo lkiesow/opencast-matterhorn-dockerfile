@@ -24,4 +24,4 @@ ADD usr-sbin-matterhorn /usr/sbin/matterhorn
 # Expose the default port
 EXPOSE 8080
 
-CMD ["/usr/sbin/matterhorn", "--interactive"]
+CMD ["/usr/sbin/matterhorn", "--notty"]

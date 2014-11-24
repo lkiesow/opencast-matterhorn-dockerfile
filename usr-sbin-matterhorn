@@ -49,17 +49,18 @@ show_version() {
 
 if [ $# -ne 1 ] || ( [ "$1" != '--daemon' ] && \
 	[ "$1" != '--interactive' ] && \
+	[ "$1" != '--notty' ] && \
 	[ "$1" != '--quit' ] && \
 	[ "$1" != '--version' ] )
 then
-	echo "Usage: $0 [ --daemon | --interactive | --quit | --help ]"
+	echo "Usage: $0 [ --daemon | --interactive | --notty | --quit | --help ]"
 	echo ''
 	echo 'OPTIONS:'
 	echo '  --version      Show Matterhorn version and exit.'
-	echo '  --daemon       Run matterhorn as _unmanaged_ daemon.'
-	echo '                 Consider using the SysV init script.'
-	echo '  --interactive  Run matterhorn in interactive mode.'
-	echo '  --quit         Stop a previously started matterhorn.'
+  echo '  --daemon       Run Matterhorn as _unmanaged_ daemon. Please consider using init or systemd.'
+	echo '  --interactive  Run Matterhorn in interactive mode.'
+	echo '  --notty        Run Matterhorn as foreground process in noninteractive mode.'
+	echo '  --quit         Try to stop a previously started Matterhorn.'
 	echo '  --help         Show this message.'
 	exit 0
 fi
@@ -125,12 +126,6 @@ FELIX="${FELIX} -Dfelix.config.properties=file:${FELIX_CONFIG_DIR}/config.proper
 FELIX="${FELIX} -Dfelix.system.properties=file:${FELIX_CONFIG_DIR}/system.properties"
 FELIX="${FELIX} -Dfelix.fileinstall.dir=$FELIX_CONFIG_DIR/load"
 
-# Configure Java Management Extensions (JMX) 
-JMX="-Dcom.sun.management.jmxremote"
-JMX="${JMX} -Dcom.sun.management.jmxremote.port=${JMX_REMOTE_PORT}"
-JMX="${JMX} -Dcom.sun.management.jmxremote.authenticate=${JMX_REMOTE_AUTHENTICATE}"
-JMX="${JMX} -Dcom.sun.management.jmxremote.ssl=${JMX_REMOTE_SSL}"
-
 LOGGING="-Dopencast.logdir=$LOGDIR"
 LOGGING="${LOGGING} -Dbundles.configuration.location=$FELIX_CONFIG_DIR"
 LOGGING="${LOGGING} -Djava.util.logging.config.file=$FELIX_CONFIG_DIR/services/java.util.logging.properties"
@@ -146,7 +141,7 @@ DISABLE_PHONEHOME="-Dnet.sf.ehcache.skipUpdateCheck=true"
 DISABLE_PHONEHOME="${DISABLE_PHONEHOME} -Dorg.terracotta.quartz.skipUpdateCheck=true"
 
 JAVA="-Xms1024m -Xmx1024m -XX:MaxPermSize=256m"
-GOSH="-Dgosh.args='--noshutdown -c noop=true'"
+( [ "$1" == '--daemon' ] || [ "$1" == '--notty' ] ) && GOSH="-Dgosh.args='--noshutdown -c noop=true'"
 
 if $DEBUG
 then
