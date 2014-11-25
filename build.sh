@@ -5,8 +5,16 @@ Opencast Matterhorn Dockerfile
 
 This script will help you in the process of building a docker image for
 Opencast Matterhorn.
+'
 
-Enter credentials for Matterhorn RPM repository
+# Switch to script dir:
+echo $(dirname $(readlink -f $0))
+cd $(dirname $(readlink -f $0))
+
+# Check if we are in a local repository or running the script from github:
+#build.sh  Dockerfile  matterhorn.repo  matterhorn-testing.repo  readme.md  usr-sbin-matterhorn
+
+echo 'Enter credentials for Matterhorn RPM repository
   http://repo.virtuos.uos.de
 '
 echo -n 'Username: '
